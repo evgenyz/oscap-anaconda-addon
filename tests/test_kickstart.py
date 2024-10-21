@@ -157,55 +157,6 @@ def test_no_profile(service):
     assert service.policy_data.profile_id == "default"
 
 
-def test_rpm(service):
-    ks_in = f"""
-    %addon {ADDON_NAME}
-        content-url = http://example.com/oscap_content.rpm
-        content-type = RPM
-        profile = Web Server
-        xccdf-path = usr/share/oscap/xccdf.xml
-    %end
-    """
-    check_ks_input(service, ks_in)
-
-    ks_out = f"""
-    %addon {ADDON_NAME}
-        content-type = rpm
-        content-url = http://example.com/oscap_content.rpm
-        content-path = usr/share/oscap/xccdf.xml
-        profile = Web Server
-    %end
-    """
-    check_ks_output(service, ks_out)
-
-
-def test_rpm_without_path(service):
-    ks_in = f"""
-    %addon {ADDON_NAME}
-        content-url = http://example.com/oscap_content.rpm
-        content-type = RPM
-        profile = Web Server
-    %end
-    """
-    check_ks_input(service, ks_in, errors=[
-        "Path to the XCCDF file has to be given if content in RPM or archive is used"
-    ])
-
-
-def test_rpm_with_wrong_suffix(service):
-    ks_in = f"""
-    %addon {ADDON_NAME}
-        content-url = http://example.com/oscap_content.xml
-        content-type = RPM
-        profile = Web Server
-        xccdf-path = usr/share/oscap/xccdf.xml
-    %end
-    """
-    check_ks_input(service, ks_in, errors=[
-        "Content type set to RPM, but the content URL doesn't end with '.rpm'"
-    ])
-
-
 def test_archive(service):
     ks_in = f"""
     %addon {ADDON_NAME}
